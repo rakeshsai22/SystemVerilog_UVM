@@ -1,0 +1,24 @@
+// design 
+module sr_latch(q,qbar,R,S);
+  input S,R;
+  output q,qbar;
+  
+  assign q = ~(R&qbar);
+  assign qbar = ~(S&q);
+endmodule
+
+
+//  testbench 
+module SR_latch_test;
+  reg S,R;
+  wire q,qbar;
+  initial 
+    begin
+      $monitor($time,"q=%b,qbar=%b,S=%b,R=%b",q,qbar,S,R);
+      S = 1'b1; R = 1'b1;
+      #5 S = 1'b0; R = 1'b1;
+      #5 S = 1'b1; R = 1'b0;
+      #5 S = 1'b0; R = 1'b0;
+      #5 S = 1'b1; R = 1'b1;
+    end
+endmodule

@@ -1,0 +1,37 @@
+// 4bit counter with asynchronous reset
+
+module mux21(rst, clk, a,b,sel,f);
+  input clk,rst;
+  input [7:0] a;
+  input [7:0] b;
+  input sel;
+  output [7:0] f;
+
+  assign f = ({8{~sel}} & a) | ({8{sel}} & b)
+// since & and | are bitwise operators and sel is a single bit reg, the upper bits are neglected(zeros)
+
+endmodule
+
+// Code your testbench here
+// or browse Examples
+module alu_tb;
+  reg clk;
+  reg rst;
+  reg [7:0] a, b;
+  reg [1:0] sel;
+  wire [7:0] f;
+
+  alu dut(a, b, sel, f);
+
+
+  initial begin
+    for (sel = 0; sel < 4; sel++) begin
+      for (a = 0; a < 16; a++) begin
+        for (b = 0; b < 16; b++) begin
+          $display("sel = %d, a = %d, b = %d, f = %d", sel, a, b, f);
+        end
+      end
+    end
+  end
+endmodule
+

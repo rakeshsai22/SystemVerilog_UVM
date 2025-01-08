@@ -98,6 +98,15 @@ module controller (
             default: state<=s0;
         endcase
     end
-
+    always @(state) begin
+        case (state)
+            s0: begin #1 LdA = 0; LdB =0; LdP = 0;clrP = 0;decB=0; end
+            s1: begin #1 LdA = 1; end
+            s2: begin #1 LdA = 0; LdB = 1; clrP = 1; end
+            s3: begin #1 LdB = 0; LdP = 1; LdP = 0; decB = 0; end
+            s4: begin #1 done = 1; LdB = 0; LdP = 0; decB = 0; end
+            default begin #1 LdA =0; LdB = 0; LdP = 0; clrP =0; decB =0 ; end
+        endcase
+    end
 
 endmodule

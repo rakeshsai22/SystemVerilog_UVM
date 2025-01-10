@@ -66,3 +66,9 @@ module COMPARE (
     assign gt = (in1 > in2);
     assign eq = (in1 == in2);
 endmodule
+
+module name(
+    port_list
+);
+    
+endmodule

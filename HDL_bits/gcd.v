@@ -70,7 +70,7 @@ endmodule
 `include ".v"
 // `default_nettype none
 
-module tb_;
+module tb_gcd;
 reg clk;
 reg rst_n;
 
@@ -101,8 +101,3 @@ end
 
 endmodule
 // `default_nettype wire ;
-module name(
-    port_list
-);
-    
-endmodule

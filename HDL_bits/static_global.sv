@@ -23,7 +23,7 @@ endclass
 Bustran b1,b2;
 initial begin
     b1 =new; //  id = 1, count=1
-    b2 =new; //  id = 1, count=2
+    b2 =new; //  id = 2, count=2
     $display("Second id =%d, count=%d", b2.id, b2.count);
 end
 

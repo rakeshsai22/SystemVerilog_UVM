@@ -28,3 +28,38 @@ module tb_top;
     end
     
 endmodule
+
+//  fork_join_any example
+
+module tb_top_any;
+    initial begin
+        #1  $$display("[%0t ns] Start fork",$time);
+        fork
+            #5 $display("[%0t ns] Thread1: execution complete",$time);
+            begin
+                #2 $display ("[%0t ns] Thread2: execution spawned",$time);
+                #4 $display ("[%0t ns] Thread2: execution complete",$time);
+            end
+            #10 $display("[%0t ns] Thread3: execution complete",$time);
+        join_any
+    end
+    $display ("[%ot ns] End of fork_join_any",$time);
+    
+endmodule
+
+//  fork_join_none example
+module tb_top_none;
+    initial begin
+        #1  $$display("[%0t ns] Start fork",$time);
+        fork
+            #5 $display("[%0t ns] Thread1: execution complete",$time);
+            begin
+                #2 $display ("[%0t ns] Thread2: execution spawned",$time);
+                #4 $display ("[%0t ns] Thread2: execution complete",$time);
+            end
+            #10 $display("[%0t ns] Thread3: execution complete",$time);
+        join_none
+    end
+    $display ("[%ot ns] End of fork_join_none",$time);
+    
+endmodule

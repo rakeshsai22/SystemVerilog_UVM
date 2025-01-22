@@ -1,0 +1,1 @@
+Threads / process are oieces of code that gets executed as a separate entity.

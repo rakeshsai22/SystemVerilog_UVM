@@ -4,7 +4,7 @@
 
 // "this" is a built-in pre-defined object handle that refers to the current instance/object of a class. It is used
 
-class pjt;
+class pkt;
     bit [31:0] addr;
 
     function new (bit [31:0] _addr);

@@ -23,22 +23,83 @@ endclass
 // compA has a uvm_blocking_put_port parameterized to accept a data object of type pkt.
 
 class compA extends uvm_component;
-    uvm_blocking_put_port#(pkt) put_port;
-    pkt pkt_obj;
-
     `uvm_component_utils(compA)
-
-    function new(string name="compA",uvm_component parent=null);
+    uvm_blocking_put_port#(pkt) put_port; // a blocking TLM put port which can send an object of type pkt
+    int m_num_txns; // number of transactions to be sent
+    function new(string name = "compA",uvm_component parent = null);
         super.new(name,parent);
     endfunction
 
-    virtual task run_phase(uvm_phase phase);
+    // TLM put_port is a class object shoudl be created with new() method in build phase
+
+    virtual function void build_phase (uvm_phase phase);
+        super.build_phase(phase);
+        put_port = new("put_port",this);
+    endfunction
+
+    // will create a packet,randomize it and send it through th eport
+    // put() is a blocking method, so the sender will wait until the receiver has received the transaction
+    // send N packets
+    virtual task run_phase (uvm_phase phase);
         phase.raise_objection(this);
-        pkt_obj = new();
-        pkt_obj.randomize();
-        `uvm_info(get_type_name(),$sformatf("Sending pkt object with addr=%0h,data=%0h",pkt_obj.addr,pkt_obj.data),UVM_MEDIUM);
-        put_port.put(pkt_obj);
+        repeat (m_num_txns) begin
+            pkt p = pkt::type_id::create("p");
+            assert(p.randomize());
+            `uvm_info("compA","Packet sent to compB",UVM_LOW)
+            p.print(uvm_default_line_printer);
+            // call TLM put() method of put_port class and pass packet
+            put_port.put(p);
+        end
         phase.drop_objection(this);
     endtask
 
+endclass
+
+// receiver class implementing put method
+
+class compB extends uvm_component;
+    `uvm_comoponent_utils(compB)
+    uvm_blocking_put_imp #(pkt,compB) put_imp;
+
+    function new(string name="compB",uvm_component parent = null);
+        super.new(name,parent);
+    endfunction
+
+    virtual function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        put_imp = new("put_imp",this);
+    endfunction
+    // implemetnation of put() method in receiver class
+    virtual task put(pkt p);
+        `uvm_info("compB","Packet received from compA",UVM_LOW)
+        p.print(uvm_default_line_printer);
+    endtask
+
+endclass
+
+// connect port
+// the connection is being done at a higher level. since both components are instantiated directly in the test class mytest, the connection is done in connect phase of the test class.
+// if these two components were instantiated in a higher level component, the connection would be done in the build phase of that component or environment.
+
+class mytest extends uvm_test;
+    `uvm_component_utils(mytest)
+    compA cA;
+    compB cB;
+
+    function new(string name="my_test",uvm_comopnent parent=null);
+        super.new(name,parent);
+    endfunction
+
+    virtual function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        cA = compA::type_id::create(compA::get_type_name(),this);
+        cB = compB::type_id::create("cB",this);
+        cA.m_num_txns = 5;
+    endfunction
+    // connection between compA and compB is done in connect phase
+    // put_port is connected to its implementation put_imp
+    virtual function void connect_phase(uvm_phase phase);
+        cA.put_port.connect(cA.put_imp);
+    endfunction
+    
 endclass

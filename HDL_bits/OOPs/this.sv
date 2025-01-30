@@ -12,3 +12,13 @@ class pkt;
     endfunction
     
 endclass
+
+module test;
+    pkt p1 = new(32'h0000_0001);
+    pkt p2 = new(32'h0000_0002);
+
+    initial begin
+        $display("p1.addr = %h", p1.addr);
+        $display("p2.addr = %h", p2.addr);
+    end
+endmodule

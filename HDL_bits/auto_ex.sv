@@ -36,3 +36,21 @@ end
 end
 endmodule
 
+// if we want to have a static variable in a task/function, we need to declare the task/function as static.
+//  static task display_out();
+//     static int count;
+//     count = count+1;
+//     $display("count = %0d", count)
+// endtask
+//  static function int get_count();
+//     static int count;
+//     count = count+1;
+//     return count;
+// endfunction
+//  initial begin
+//     display_out();
+//     display_out();
+//     $display("count = %0d", get_count());
+//     $display("count = %0d", get_count());
+// end
+

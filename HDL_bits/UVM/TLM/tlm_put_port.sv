@@ -103,3 +103,14 @@ class mytest extends uvm_test;
     endfunction
     
 endclass
+
+// testbench
+// the testbench is the top level component that instantiates the test class and runs the test
+module tb;
+    mytest test;
+    initial begin
+        test = mytest::type_id::create("test");
+        uvm_config_db#(uvm_object_wrapper)::set(null,"uvm_test_top",".run_phase","*",$sformatf("%s.m_run_phase",test.get_full_name()));
+        run_test();
+    end
+endmodule

@@ -32,7 +32,6 @@ class dff_test extends uvm_test;
     print();
   endfunction
   
-  endfunction
   task run_phase(uvm_phase phase);
     `uvm_info("test class","run_phase",UVM_MEDIUM)
     phase.raise_objection(this); // stay in run_phase untill the drop objection

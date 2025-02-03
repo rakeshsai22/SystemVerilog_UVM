@@ -3,5 +3,5 @@ Continuous assignment in Verilog drives the right side value onto the left side 
 */
 
 module top_module( input in, output out );
-assign out = in;
+    assign out = in;
 endmodule

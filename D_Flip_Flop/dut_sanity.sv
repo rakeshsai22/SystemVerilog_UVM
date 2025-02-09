@@ -79,3 +79,13 @@ task assert_equal;
         end
     end
 endtask
+
+task assert_not_equal;
+    input [31:0] a,b;
+    begin
+        if(a==b) begin
+            $display("Assertion failed: %0d == %0d",a,b);
+            $finish;
+        end
+    end
+endtask

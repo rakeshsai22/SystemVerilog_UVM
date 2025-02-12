@@ -77,12 +77,12 @@ module tb_sanity_sync();
         read();
         read();
 
-        $display($time,"\n Test_case 2");
+        $display($time,"\n Test_case 2 :: EMPTY FIFO");
         for (integer i =0;i<FIFO_DEPTH;i=i+1) begin
             write(i);
             read();
         end
-        $display($time,"\n Test_case 3");
+        $display($time,"\n Test_case 3 :: FULL FIFO");
         for (integer i =0;i<FIFO_DEPTH;i=i+1) begin
             write(i);
         end

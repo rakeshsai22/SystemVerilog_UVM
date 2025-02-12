@@ -3,6 +3,22 @@
 //  `uvm_component_utils -> to register the components (uvm_driver, uvm_monitor, uvm_agent, uvm_env, uvm_test)
 //  `uvm_object_utils -> to register the object (uvm_sequence, uvm_sequence_item, uvm_transaction)
 
+// factory override 
+    // substitute of one class with another class without any re-compile
+
+    // Type override 
+    // 1. Type override is used to substitute one class with another class
+    // 2. all the instances of the original class will be replaced with the new typeoverride class
+    // 3. Applicable to both uvm_components and uvm_objects
+    // set_type_override_by_type(<"orig_type">, <"override_type">,<replace>)
+    // set_type_override_by_name(<"orig_name">, <"override_type">,<replace>)
+
+    // Instance override
+    // 1. Instance override is used to substitute one specific instance of a class with another instance of a class
+    // 2. Applicable only to uvm_components
+    // 3. set_inst_override_by_type(<"orig_type">, <"inst_name">, <"override_type">)
+    // 4. set_inst_override_by_name(<"orig_name">, <"inst_name">, <"override_type">)
+
 // example of uvm factory
 // 1. create a class
 // 2. register the class with uvm factory

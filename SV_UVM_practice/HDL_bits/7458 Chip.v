@@ -24,4 +24,4 @@ module top_module (
 
 endmodule
 */
-# Simulation finished at 2196 ps
+// # Simulation finished at 2196 ps

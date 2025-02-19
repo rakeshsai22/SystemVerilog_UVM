@@ -19,3 +19,10 @@ class child extends parent;
         $display("Derived class data = %0h", data);
     endfunction
 endclass
+
+// testbench
+module tb;
+    initial begin
+        child c = new(32'h12345678, 32'h87654321);
+    end
+endmodule

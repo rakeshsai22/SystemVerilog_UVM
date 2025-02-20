@@ -26,3 +26,9 @@ module tb;
         child c = new(32'h12345678, 32'h87654321);
     end
 endmodule
+
+module name(
+    port_list
+);
+    
+endmodule

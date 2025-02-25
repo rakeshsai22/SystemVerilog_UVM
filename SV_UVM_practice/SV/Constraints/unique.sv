@@ -43,3 +43,8 @@ module cons_unique;
     end
     
 endmodule
+
+// testbench
+module tb;
+    cons_unique u_cons_unique();
+endmodule

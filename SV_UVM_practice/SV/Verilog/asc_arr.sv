@@ -52,3 +52,8 @@ module assoc_arr;
 
     end
 endmodule
+
+// testbench
+module tb;
+    assoc_arr obj;
+endmodule

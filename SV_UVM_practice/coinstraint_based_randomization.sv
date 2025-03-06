@@ -20,3 +20,14 @@ class myPacket;
         this.high =2;
     endfunction
 endclass
+
+module packet_tb;
+    myPacket pkt;
+    initial begin
+        pkt = new();
+        repeat(5) begin
+            pkt.randomize();
+            $display("mode = %0h, key = %0h", pkt.mode, pkt.key);
+        end
+    end
+endmodule

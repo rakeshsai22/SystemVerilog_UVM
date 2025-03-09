@@ -1,10 +1,13 @@
 // Code your design here
 class randvar;
-  rand bit [7:0] var1,var3,var3,var4;
+  rand bit [7:0] var1,var3,var4;
   randc bit[7:0] var2; //non-repeated values
-  
+  randc int unsigned val;
+  bit C;
   rand bit[7:0] A;
   rand bit [8:0] B;
+  rand int j,k;
+  
   
   constraint A_c {A inside {[25:50]};}
   constraint A_c2 {A > 40;}
@@ -15,9 +18,24 @@ class randvar;
   constraint const_5{var1 <= 43;
                     var1 >= 34;}
   constraint const_6{var1 inside {[0:50]};}
+  constraint const_9{val inside {0,1,2,3};}
+  constraint const_8{var3 % 2 == 0;}
+  constraint const_10{
+    j inside {[0:8]};
+    var3 == (2**j);}
+  
+  function void post_randomize();
+    case(val)
+      0: C = 0;
+      1: C = 1;
+      2: C = 'x;
+      3: C = 'z;
+    endcase
+      endfunction
+      
   
   function void print_val(string comment = "Initial values");
-    $display("%s: A = %0d, B = %0d, var1 = %0d, var2= %0d, var3 = %0d, var4 = %0d",comment,A,B,var1,var2,var3,var4);
+    $display("%s: A = %0d, B = %0d,C=%0d, var1 = %0d, var2= %0d, var3 = %0d, var4 = %0d",comment,A,B,C,var1,var2,var3,var4);
   endfunction
 endclass
 
@@ -138,6 +156,13 @@ endmodule
 
 
 
+
+    
+
+
+
+
+
  
 
 
@@ -148,13 +173,12 @@ endmodule
 // default values: A = 0, var1 = 0, var2= 0, var3 = 0, var4 = 0
 // Chronologic VCS simulator copyright 1991-2023
 // Contains Synopsys proprietary information.
-// Compiler version U-2023.03-SP2_Full64; Runtime version U-2023.03-SP2_Full64;  Mar  9 06:52 2025
-// default values: A = 0, B = 0, var1 = 0, var2= 0, var3 = 0, var4 = 0
-// after randomizing all: A = 42, B = 258, var1 = 37, var2= 91, var3 = 109, var4 = 124
+// Compiler version U-2023.03-SP2_Full64; Runtime version U-2023.03-SP2_Full64;  Mar  9 07:34 2025
+// default values: A = 0, B = 0,C=0, var1 = 0, var2= 0, var3 = 0, var4 = 0
+// after randomizing all: A = 42, B = 258,C=0, var1 = 40, var2= 58, var3 = 128, var4 = 134
 //            V C S   S i m u l a t i o n   R e p o r t 
 // Time: 0 ns
-// CPU Time:      0.410 seconds;       Data structure size:   0.0Mb
-
+// CPU Time:      0.420 seconds;       Data structure size:   0.0Mb
 // ############################## OUTPUTS ########################################
 
 

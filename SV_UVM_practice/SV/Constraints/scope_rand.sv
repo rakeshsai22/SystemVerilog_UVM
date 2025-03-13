@@ -47,14 +47,15 @@ module constraint_ex;
     
 endmodule
 
-// randomizing the object inside the module
-module scope_rand;
-    seq_item#(100,200) obj;
-    initial begin
-        if(obj.randomize())
-        $display("Randomization successful, obj = %0h",obj);
-        else begin
-            $display("Randomization failed, obj = %0h",obj);
-        end
-    end
-    enum data_type {  } name
+// // randomizing the object inside the module
+// module scope_rand;
+//     seq_item#(100,200) obj;
+//     initial begin
+//         if(obj.randomize())
+//         $display("Randomization successful, obj = %0h",obj);
+//         else begin
+//             $display("Randomization failed, obj = %0h",obj);
+//         end
+//     end
+// endmodule
+

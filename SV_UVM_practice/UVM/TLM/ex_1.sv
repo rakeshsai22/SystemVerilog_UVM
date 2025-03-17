@@ -18,3 +18,15 @@ class simple_pkt extends uvm_object;
 endclass
 
 // simple_pkt class object will be a transaction that can be sent from twocomponents via TLM interface ports "port" and "export".
+
+// testbench
+module tb;
+    simple_pkt pkt;
+    initial begin
+        pkt = simple_pkt::type_id::create("pkt");
+        if(pkt.randomize())
+            $display("Randomization successful, pkt = %0h",pkt);
+        else
+            $display("Randomization failed, pkt = %0h",pkt);
+    end
+endmodule

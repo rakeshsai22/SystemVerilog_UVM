@@ -70,9 +70,11 @@ module top;
 
 class pattern_4;
     randc bit [3:0] val;
-    randc unit uval;
-    constraint val_a {val,uval inside {[1:10]};
+    randc unsigned int uval;
+    constraint val_a {val inside {[1:10]};
                         val % 2 == 1;}
+    constraint val_a {uval inside {[1:10]};
+                        uval % 2 == 1;}
 endclass
 
 module top;

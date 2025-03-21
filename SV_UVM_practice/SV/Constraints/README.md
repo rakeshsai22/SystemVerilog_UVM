@@ -106,25 +106,3 @@ This repository contains **6 SystemVerilog files** demonstrating various constra
 
 6. **Associative Arrays**:
    - Use `rand bit[scale_e]` to declare associative arrays with enumerated types.
-
----
-
-## Notes
-
-1. **`$write` vs `$display` vs `$strobe`**:
-   - `$write`: Prints without a newline.
-   - `$display`: Prints with a newline.
-   - `$strobe`: Prints final values at the end of the simulation time step.
-
-2. **2-State vs 4-State Variables**:
-   - 2-state variables (`bit`, `int`, etc.) are more efficient for simulation.
-   - 4-state variables (`logic`, `reg`) can represent `X` and `Z` states.
-
-3. **Queues**:
-   - Use `int queue[$:N]` for bounded queues.
-   - Use `int queue[$]` for unbounded queues.
-
-
----
-
-Feel free to explore the code and experiment with different constraints! If you have any questions or suggestions, please open an issue or submit a pull request.

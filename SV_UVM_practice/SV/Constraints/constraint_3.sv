@@ -50,6 +50,7 @@ module top;
 //  arr a[12] : 7
 //  arr a[13] : 10
 //  arr a[14] : 7
+// ....
 
 // cosntraint for two  random variables such that one var 
 // should not match other and total number of bits toggled in one var should be 5 with respect to the other

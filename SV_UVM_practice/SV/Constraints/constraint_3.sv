@@ -76,3 +76,68 @@ module top;
 
     end
     endmodule
+
+// output : A: 121 B : 209		 A: 206 B : 86		 A: 171 B : 144		 A: 143 B : 13
+
+
+// Write a constraint such that when rand bit[3:0] a is randomized,
+// the value of “a” should not be same as 5 previous occurrences of the
+// value of “a”.
+
+class pattern_3;
+    rand bit [3:0] a;
+    int queue_a[$:7];
+
+    cosntraint a_1 {!(a inside {queue_a});}
+
+    function void post_randomize();
+        queue_a.push_front(a);
+        $display("value of a=%0d\n",a);
+        if(queue_a.size() == 6)
+            queue_a.pop_back();
+        $display("previous occurences = %0p",queue_a);
+    endfunction
+    
+endclass
+
+module top;
+    pattern_3 p1;
+
+    initial begin
+        p1=new();
+        repeat(3) begin
+            p1.randomize();
+    end
+    end
+    endmodule
+
+// output : 
+// Compiler version U-2023.03-SP2_Full64; Runtime version U-2023.03-SP2_Full64;  Mar 21 14:07 2025
+// value of a=13
+// previous occurences = '{13} 
+// value of a=3
+// previous occurences = '{3, 13} 
+// value of a=8
+// previous occurences = '{8, 3, 13} 
+// value of a=4
+// previous occurences = '{4, 8, 3, 13} 
+// value of a=2
+// previous occurences = '{2, 4, 8, 3, 13} 
+// value of a=6
+// previous occurences = '{6, 2, 4, 8, 3} 
+// value of a=9
+// previous occurences = '{9, 6, 2, 4, 8} 
+// value of a=3
+// previous occurences = '{3, 9, 6, 2, 4} 
+
+
+
+// Notes:
+// Queue: follows first in first out principle
+// similar to a one dimensional unpacked array that grows and shrinls automatically
+
+// A bounded queue has a specific size and can hold a limited number of entries
+// datatype <name_of_queue> [$:N]
+
+// Unbounded queue can have unlimited number of entries
+// datatype <name_of_queue> [$]

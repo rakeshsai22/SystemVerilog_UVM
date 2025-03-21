@@ -1,7 +1,3 @@
-Thank you for sharing all **6 files**! I’ll now generate a comprehensive **README.md** file for your repository. This README will include the problem statements, solutions, and links to the respective files. Here's the draft:
-
----
-
 # SystemVerilog Constraints Examples
 
 This repository contains **6 SystemVerilog files** demonstrating various constraint-based randomization techniques. Each file focuses on a specific problem and provides a solution using SystemVerilog constraints.

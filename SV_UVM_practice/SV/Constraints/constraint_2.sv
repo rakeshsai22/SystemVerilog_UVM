@@ -135,3 +135,100 @@ endmodule
         // 2-state, 32-bit signed integer datatype
 // Longint:
             // 2-state, 64-bit signed integer
+
+
+
+This is just a simple shared plaintext pad, with no execution capabilities.
+
+When you know what language you'd like to use for your interview,
+simply choose it from the dots menu on the tab, or add a new language
+tab using the Languages button on the left.
+
+You can also change the default language your pads are created with
+in your account settings: https://app.coderpad.io/settings
+
+Enjoy your interview!
+
+interview
+
+1. Write A System Verilog Constraint To Generate Unique Values In Dynamic Array Without Unique Keyword
+
+randc int arr []
+int arr_size;
+int min;
+int max;
+
+int queue q[$]
+
+constraint c_size {
+  array_vals.size() == arr_size;
+}
+
+constraint c_uniq {
+  foreach (arr[i]) {
+    array_vals[i] inside {[min:max]};
+    foreach (arr[j]) {
+      if(i!=j) 
+        arr[i]!=arr[j];
+    }
+  }
+}
+
+
+constraint c_uniq {
+  foreach(arr[i])
+    arr[i];
+
+  foreach (arr[j]) {
+    if (j<i) arr[i] != arr[j];
+  }
+
+}
+
+1. Every time the valid signal vld is high, the cnt is incremented
+assert property (@(posedge clk)
+  vld |-> (cnt == $past(cnt)+1)) 
+
+Req - Ack
+1. once the req come on the posedge of the clock, the ack should occur within 10 to 20 clock cycles.
+2. second req should not occur until the ack for first request is completed.
+
+assert property (@(posedge clk)
+  req |-> ##[10:20] ack);
+  // req |-> [*10:20] ack // will be for continous 10-20 cycles, may not be good
+
+assert property (@(posedge clk)
+  $rose(req) |-> (!req throughout ask[|->1]));
+
+Verily code for a 4 bit counter which counts up if up_not_down = 1 and counts down if up_not_down = 0
+input clk, rstn,
+input up_not_down,
+output [3:0] count
+
+module counter(
+  input clk,rstn;
+  input up_not_down,
+  output [3:0] count,
+  output max, // count = 1111
+  output min  // count = 0000
+)
+
+  initial begin
+
+  end
+  always @(posedge clk or negedge rst) begin
+    if(!rstn)
+      count<=0;
+    else if(count == 4'b1111)
+      max<=1'b1;
+    else if (count == 4'b000)
+      min<=1'b0;
+    else begin
+      case (up_not_down) begin
+        1 : if (!max) count <= count+1;
+        0 : if (!min) count <= count-1;
+        default : count <=count+1;
+      end
+      end
+
+  end

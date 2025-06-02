@@ -19,19 +19,19 @@ interface dff_if (input clk);
   // );
 
   // cb for driving inputs
-  clocking drv_cb @(posedge clk);
-    output rst_n, d;
-  endclocking
+  // clocking drv_cb @(posedge clk);
+  //   output rst_n, d;
+  // endclocking
 
-    // cb for monitoring outputs
-    clocking mon_cb @(posedge clk);
-      input q;
-    endclocking
+  //   // cb for monitoring outputs
+  //   clocking mon_cb @(posedge clk);
+  //     input q;
+  //   endclocking
 
-    // modport for driver
-  modport DRIVER(clocking drv_cb);
-    // modport for monitor
-  modport MONITOR(clocking mon_cb);
+  //   // modport for driver
+  // modport DRIVER(clocking drv_cb);
+  //   // modport for monitor
+  // modport MONITOR(clocking mon_cb);
   // ################################################################################################
 
           //   UVM Testbench
@@ -46,11 +46,12 @@ interface dff_if (input clk);
   // ################################################################################################
 
   // clocking block
-  // clocking cb @(posedge clk);
-  //   default input #2 output #1step;
-  //   output rst_n,d; //input of DUT
-  //   input q; //output of DUT
-  // endclocking
+  
+  clocking cb @(posedge clk);
+    default input #2 output #1step;
+    output rst_n,d; //input of DUT
+    input q; //output of DUT
+  endclocking
 // Difference between a clocking block and a modport is that a clocking block 
 // is used to define the timing of the signals and modport is used to define the interface of the signals.
 

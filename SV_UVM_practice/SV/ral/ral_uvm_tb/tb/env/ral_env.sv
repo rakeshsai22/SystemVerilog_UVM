@@ -3,6 +3,7 @@ class my_env extends uvm_env;
     simple_reg_block reg_blk;
     apb_agent agent;
     my_reg_adapter adapter;
+    reg_scoreboard sb;
 
     `uvm_component_utils(my_env)
 
@@ -20,6 +21,7 @@ class my_env extends uvm_env;
         reg_blk.build();
         reg_blk.lock_model();
         reg_blk.set_hdl_path_root("top.dut"); //rtl path for backdoor
+        sb = reg_scoreboard::type_id::create("sb",this);
 
         // adapter creation
         adapter= my_reg_adapter::type_id::create("adapter");
@@ -33,6 +35,8 @@ class my_env extends uvm_env;
         super.connect_phase(phase);
         //adapter connection :: reg model to sequencer
         reg_blk.default_map.set_sequencer(agent.sqr,adapter);
+        agent.mon.mon_ap.connect(sb.item_imp);
+        
     endfunction
 
 endclass //my_env extends superClass

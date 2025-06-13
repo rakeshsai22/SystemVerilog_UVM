@@ -26,6 +26,9 @@ class rand_config_seq extends uvm_sequence #(uvm_reg);
 
         // wrtite randomized value
         blk.cfg_reg.write(status,exp_data,UVM_FRONTDOOR, .parent(null));
+        // backdoor
+        // cfg_reg.write(status,8'hAB,UVM_BACKDOOR);
+        // cfg_reg.mirror(status,UVM_BACKDOOR);
 
         // mirror back from dut
         blk.cfg_reg.write(status, UVM_FRONTDOOR);

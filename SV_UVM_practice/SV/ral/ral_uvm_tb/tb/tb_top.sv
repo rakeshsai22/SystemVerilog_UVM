@@ -30,6 +30,7 @@ module tb_top;
     initial begin
         uvm_config_db #(virtual apb_if)::set(null,"*",apb_if_inst);
         run_test("my_test");
+        
     end
 
 

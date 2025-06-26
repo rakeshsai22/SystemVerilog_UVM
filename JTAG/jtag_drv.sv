@@ -38,56 +38,63 @@ class jtag_drv extends uvm_driver#(jtag_seq_item);
     end
   endtask
   
-  task loadIR( vif.IR_SIZE, bit [IR_SIZE-1:0] data, output bit [IR_SIZE-1:0] data_tdo);
-    bit [vif.IR_SIZE-1:0] data_out;
-    
-    // Apply TMS sequence to enter Shift-IR state
-    vif.TMS = 0;
-    repeat(2) @(posedge vif.TCK);
-    vif.TMS = 1;
-    repeat(2) @(posedge vif.TCK);
-    
-    // Shift in data
-    foreach(data[i]) begin
-      vif.TDI = data[i];
+  task loadIR(int size,bit [IR_SIZE-1:0] data, output bit [IR_SIZE-1:0] data_tdo);
+    bit [IR_SIZE-1:0] data_out;
+    // 1. move to shift_IR - tms : 11000
+    bit [4:0] tms_to_shift_ir = 5'b11000;
+    foreach (tms_to_shift_ir[i]) begin
+      vif.TMS <= tms_to_shift_ir[i];
+      vif.TDI <=0;
       @(posedge vif.TCK);
-      data_out[vif.IR_SIZE-i-1] = vif.TDO;
     end
-    
-    // Exit Shift-IR state
-    vif.TMS = 0;
-    @(posedge vif.TCK);
-    vif.TMS = 1;
-    @(posedge vif.TCK);
 
+    // 2. shift in data lsb first
+    for (int i =0; i<size;i++) begin
+      vif.TDI <= data[i];
+      vif.TMS <= (i == size-1) ? 1:0;
+      @(posedge vif.TCK);
+      data_out[i] = vif.TDO;
+    end
+
+    // 3. EXIT_IR to update_IR (TMS =1 then 0)
+    vif.TMS <= 1;
+    vif.TDI <= 0;
+    @(posedge vif.TCK);
+    vif.TMS <= 0;
+    @(posedge vif.TCK);
     data_tdo = data_out;
   endtask
-  
-  task loadDR(int DR_SIZE, bit [DR_SIZE-1:0] data, output bit [DR_SIZE-1:0] data_tdo);
-    bit [vif.DR_SIZE-1:0] data_out;
-    
-    // Apply TMS sequence to enter Shift-DR state
-    vif.TMS = 0;
-    @(posedge vif.TCK);
-    vif.TMS = 1;
-    repeat(2) @(posedge vif.TCK);
-    
-    // Shift in data
-    foreach(data[i]) begin
-      vif.TDI = data[i];
-      @(posedge vif.TCK);
-      data_out[vif.DR_SIZE-i-1] = vif.TDO;
-    end
-    
-    // Exit Shift-DR state
-    vif.TMS = 0;
-    @(posedge vif.TCK);
-    vif.TMS = 1;
-    @(posedge vif.TCK);
 
+  task loadDR(int size,bit[DR_SIZE-1:0] data, output bit[DR_SIZE-1:0] data_tdo);
+    bit [DR_SIZE-1:0] data_out;
+
+    // 1. move to shiftDR : tms : 100
+    bit[2:0] tms_to_shift_dr = 3'b100;
+    foreach (tms_to_shift_dr[i]) begin
+      vif.TMS<=tms_to_shift_dr[i];
+      vif.TDO <=0;
+      @(posedge vif.TCK);
+    end
+
+    // 2. shift in data to dr
+    for (int i=0; i<size; i++) begin
+      vif.TDI<=data[i];
+      vif.TMS<=(i==size-1) ? 1:0;
+      @(posedge vif.TCK);
+      data_out[i] = vif.TDO;
+
+    end
+
+    // 3. EXIT_DR to update_DR (tms = 1 then 0)
+    vif.TMS <= 1;
+    vif.TDI <=0;
+    @(posedge vif.TCK);
+    vif.TMS <=0;
+    @(posedge vif.TCK);
     data_tdo = data_out;
+    
   endtask
-  
+
   task sample_tdo(jtag_seq_item seqi);
     seqi.tdo = vif.TDO;
   endtask

@@ -11,7 +11,8 @@ class base_test extends uvm_test;
     endfunction
     
     jtag_env env;
-    jtag_seq seq;
+    // jtag_seq seq;
+    jtag_ir_write_seq seq;
     virtual dut_if vif;
 
 
@@ -21,19 +22,18 @@ class base_test extends uvm_test;
       env = jtag_env::type_id::create("env", this);
       
       if(!uvm_config_db#(virtual dut_if)::get(this,"","vif",vif))
-        `uvm_fatal("Base Test","did not get vif")
+        `uvm_fatal("JTAG_TEST", "Virtual interface is not set")
         uvm_config_db#(virtual dut_if)::set(this,"*","vif",vif);
 //         uvm_config_db#(virtual dut_if)::set(this,"env.agt.*","dut_vif",vif);
       
         endfunction
 
   task run_phase(uvm_phase phase);
-    seq= jtag_seq::type_id::create("seq",this);
-    phase.raise_objection( this, "Starting jtag_base_seq in main phase" );
-    $display("Starting sequence jseq run_phase",$time);
-    seq.start(env.jagt.jseq);
-    phase.drop_objection( this , "Finished jtag_seq in main phase" );
-    #1000ns;
+    phase.raise_objection( this, "Starting jtag_ir_write_seq" );
+    seq = jtag_ir_write_seq::type_id::create("seq");
+    seq.instr = 4'b0010; //IDCODE -- testing
+    seq.start(env.jagt.sqr);
+    phase.drop_objection( this , "Finished jtag_ir_write_seq" );
   endtask
   
 

@@ -6,12 +6,12 @@ class synchronous_counter_seq extends uvm_sequence #(synchronous_counter_seq_ite
   endfunction
 
   task body();
-    synchronous_counter_seq_item req;
+    synchronous_counter_seq_item synchronous_counter_item;
     repeat (10) begin
-      req = synchronous_counter_seq_item::type_id::create("req");
-      assert(req.randomize());
-      start_item(req);
-      finish_item(req);
+      synchronous_counter_item = synchronous_counter_seq_item::type_id::create("synchronous_counter_item");
+      assert(synchronous_counter_item.randomize());
+      start_item(synchronous_counter_item);
+      finish_item(synchronous_counter_item);
     end
   endtask
 

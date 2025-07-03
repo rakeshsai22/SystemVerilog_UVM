@@ -1,23 +1,23 @@
-class fulladd_test extends uvm_test;
-  `uvm_component_utils(fulladd_test)
+class sync_fifo_test extends uvm_test;
+  `uvm_component_utils(sync_fifo_test)
 
-  fulladd_env     fulladd_env;
-  fulladd_seq     my_seq;
-  virtual fulladd_if fulladd_vif;
+  sync_fifo_env     my_env;
+  sync_fifo_seq     my_seq;
+  virtual sync_fifo_if sync_fifo_vif;
 
-  function new(string name = "fulladd_test", uvm_component parent = null);
+  function new(string name = "sync_fifo_test", uvm_component parent = null);
     super.new(name, parent);
   endfunction
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
 
-    if (!uvm_config_db#(virtual fulladd_if)::get(this, "", "vif", fulladd_vif))
+    if (!uvm_config_db#(virtual sync_fifo_if)::get(this, "", "vif", sync_fifo_vif))
       `uvm_fatal("NO_VIF", "virtual interface not found");
 
-    uvm_config_db#(virtual fulladd_if)::set(this, "fulladd_env", "vif", fulladd_vif);
+    uvm_config_db#(virtual sync_fifo_if)::set(this, "my_env", "vif", sync_fifo_vif);
 
-    fulladd_env = fulladd_env::type_id::create("fulladd_env", this);
+    my_env = sync_fifo_env::type_id::create("my_env", this);
   endfunction
 
   task run_phase(uvm_phase phase);
@@ -30,8 +30,8 @@ class fulladd_test extends uvm_test;
     case (test_type)
       "default": begin
         `uvm_info("TEST", "Running default sequence", UVM_MEDIUM)
-        my_seq = fulladd_seq::type_id::create("my_seq");
-        my_seq.start(fulladd_env.fulladd_agt.fulladd_sqr);
+        my_seq = sync_fifo_seq::type_id::create("my_seq");
+        my_seq.start(my_env.agt.sqr);
       end
 
       default: begin

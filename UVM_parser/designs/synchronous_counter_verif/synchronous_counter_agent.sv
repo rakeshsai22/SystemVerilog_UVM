@@ -1,9 +1,9 @@
-class fulladd_agent extends uvm_agent;
-  `uvm_component_utils(fulladd_agent)
+class synchronous_counter_agent extends uvm_agent;
+  `uvm_component_utils(synchronous_counter_agent)
 
-  fulladd_driver      drv;
-  fulladd_monitor     mon;
-  fulladd_sequencer   sqr;
+  synchronous_counter_driver      drv;
+  synchronous_counter_monitor     mon;
+  synchronous_counter_sequencer   sqr;
 
   function new(string name, uvm_component parent);
     super.new(name, parent);
@@ -11,10 +11,10 @@ class fulladd_agent extends uvm_agent;
 
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    mon = fulladd_monitor::type_id::create("mon", this);
+    mon = synchronous_counter_monitor::type_id::create("mon", this);
     if (get_is_active() == UVM_ACTIVE) begin
-      sqr = fulladd_sequencer::type_id::create("sqr", this);
-      drv = fulladd_driver::type_id::create("drv", this);
+      sqr = synchronous_counter_sequencer::type_id::create("sqr", this);
+      drv = synchronous_counter_driver::type_id::create("drv", this);
     end
   endfunction
 

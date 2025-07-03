@@ -9,13 +9,52 @@ def remove_comments(code: str) -> str:
     return code
 
 # Step 2: Extract ports + parameters
+
+def extract_parameters(verilog_code: str) -> dict:
+    parameters = {}
+
+    # Extract the full parameter block between #( ... )
+    match = re.search(r'module\s+\w+\s*#\s*\((.*?)\)\s*\(', verilog_code, re.S)
+    if match:
+        param_block = match.group(1)
+
+        # Remove comments and newlines for cleaner parsing
+        param_block = re.sub(r'//.*', '', param_block)
+        param_block = re.sub(r'/\*.*?\*/', '', param_block, flags=re.S)
+        param_block = param_block.replace('\n', ' ')
+
+        # Ensure everything is comma separated properly
+        entries = re.split(r',(?![^\[\]]*\])', param_block)
+
+        current_type = 'parameter'  # default context after first match
+
+        for entry in entries:
+            entry = entry.strip()
+            if not entry:
+                continue
+
+            # Check if this line defines a new parameter explicitly
+            match = re.match(r'(parameter|localparam)\s+(\w+)\s*=\s*(.*)', entry)
+            if match:
+                current_type, name, value = match.groups()
+            else:
+                # It's an implicit continuation: just param = value
+                match = re.match(r'(\w+)\s*=\s*(.*)', entry)
+                if not match:
+                    continue  # skip invalid line
+                name, value = match.groups()
+
+            parameters[name.strip()] = value.strip()
+
+    return parameters
+
+
+
 def extract_ports_and_params(file_path: str):
     verilog_code = Path(file_path).read_text()
     verilog_code = remove_comments(verilog_code)
 
-    # Parse parameters
-    param_pattern = re.compile(r'parameter\s+(\w+)\s*=\s*([^,;\n)]+)')
-    parameters = {name: value.strip() for name, value in param_pattern.findall(verilog_code)}
+    parameters = extract_parameters(verilog_code)
 
     # Match module header
     module_match = re.search(r'module\s+(\w+)\s*(#\s*\(.*?\))?\s*\((.*?)\);\s*', verilog_code, re.S)
@@ -55,17 +94,41 @@ def extract_ports_and_params(file_path: str):
 
     return module_name, parameters, port_info
 
+
 # Step 3: Generate interface code
-def generate_uvm_interface(module_name: str, ports: dict, clk_name: str = 'clk') -> str:
-    lines = [f"interface {module_name}_if(input logic {clk_name});"]
+def generate_uvm_interface(module_name: str, ports: dict, parameters: dict, clk_name: str = 'clk') -> str:
+    # Format parameter block if parameters exist
+    param_str = ""
+    if parameters:
+        param_list = [f"parameter {k} = {v}" for k, v in parameters.items()]
+        param_str = "#(\n  " + ",\n  ".join(param_list) + "\n) "
+
+    # Start interface definition
+    lines = [f"interface {module_name}_if {param_str}();"]
+
+    # Always define clk as logic (do not drive an input inside interface)
+    if clk_name in ports:
+        lines.append(f"  logic {clk_name};")
+
+    # Add the rest of the signals (skip clk)
     for name, info in ports.items():
         if name == clk_name:
             continue
-        packed = f"{info['packed']} " if info['packed'] else ''
-        unpacked = f"{info['unpacked']} " if info['unpacked'] else ''
-        lines.append(f"  {info['type']} {packed}{name} {unpacked};")
+
+        dtype = info['type']
+        packed = info['packed'] or ""
+        unpacked = info['unpacked'] or ""
+
+        # Clean up spacing (handle packed width like [DWIDTH-1:0])
+        spacing = " " if packed else ""
+        line = f"  {dtype} {packed}{spacing}{name}{unpacked};"
+        lines.append(line)
+
     lines.append("endinterface")
-    return "\n".join(lines)  
+    return "\n".join(lines)
+
+
+ 
 
 # Step 4a: Create verification folder and write interface
 def generate_verification_folder(verilog_file: str, module_name: str, ports: dict):
@@ -74,7 +137,7 @@ def generate_verification_folder(verilog_file: str, module_name: str, ports: dic
     verif_dir = design_dir / f"{module_name}_verif"
     verif_dir.mkdir(exist_ok=True)
 
-    interface_code = generate_uvm_interface(module_name, ports)
+    interface_code = generate_uvm_interface(module_name, ports, parameters)
     interface_file = verif_dir / f"{module_name}_if.sv"
     interface_file.write_text(interface_code)
     print(f"[INFO] Interface file generated at: {interface_file}")
@@ -113,7 +176,7 @@ def generate_tb_top(verilog_file: str, module_name: str, parameters: dict, ports
         'module tb;',
         '',
         f'  logic {clk_name};',
-        f'  {module_name}_if vif ({clk_name});',
+        f'  {module_name}_if vif ();',
         '',
         '  // Clock generation',
         f'  initial {clk_name} = 0;',
@@ -126,6 +189,8 @@ def generate_tb_top(verilog_file: str, module_name: str, parameters: dict, ports
         '',
         '  // Connect to UVM',
         '  initial begin',
+        '    $dumpfile("dump.vcd");',
+        '    $dumpvars(0, tb);',
         f'    uvm_config_db#(virtual {module_name}_if)::set(null, "*", "vif", vif);',
         '    run_test();',
         '  end',
@@ -136,15 +201,21 @@ def generate_tb_top(verilog_file: str, module_name: str, parameters: dict, ports
     tb_file.write_text("\n".join(tb_lines))
     print(f"[INFO] Testbench top generated at: {tb_file}")
 
-def generate_sequence_item(module_name: str, ports: dict, verif_dir: Path):
+def generate_sequence_item(module_name: str, ports: dict, parameters: dict, verif_dir: Path):
     file_path = verif_dir / f"{module_name}_seq_item.sv"
 
     input_ports = {k: v for k, v in ports.items() if v['direction'] == 'input'}
     lines = [f"class {module_name}_seq_item extends uvm_sequence_item;"]
 
     for name, info in input_ports.items():
-        width = info['packed'] if info['packed'] else ''
-        lines.append(f"  rand {info['type']} {width} {name};")
+        packed = info['packed']
+        # Replace parameter with value if available
+        if packed:
+            for param, value in parameters.items():
+                packed = packed.replace(param, value)
+
+        packed_str = f"{packed} " if packed else ''
+        lines.append(f"  rand {info['type']} {packed_str}{name};")
 
     lines += [
         "",
@@ -159,6 +230,8 @@ def generate_sequence_item(module_name: str, ports: dict, verif_dir: Path):
 
     file_path.write_text("\n".join(lines))
     print(f"[INFO] Sequence item generated at: {file_path}")
+
+
 
 def generate_sequence(module_name: str, verif_dir: Path):
     file_path = verif_dir / f"{module_name}_seq.sv"
@@ -229,15 +302,35 @@ def generate_driver(module_name: str, ports: dict, verif_dir: Path):
     file_path.write_text("\n".join(lines))
     print(f"[INFO] Driver generated at: {file_path}")
 
+def generate_sequencer(module_name: str, verif_dir: Path):
+    file_path = verif_dir / f"{module_name}_sequencer.sv"
+
+    lines = [
+        f"class {module_name}_sequencer extends uvm_sequencer #({module_name}_seq_item);",
+        f"  `uvm_component_utils({module_name}_sequencer)",
+        "",
+        f"  function new(string name, uvm_component parent);",
+        "    super.new(name, parent);",
+        "  endfunction",
+        "",
+        "endclass"
+    ]
+
+    file_path.write_text("\n".join(lines))
+    print(f"[INFO] Sequencer generated at: {file_path}")
+
+
 
 def generate_agent(module_name: str, verif_dir: Path):
     file_path = verif_dir / f"{module_name}_agent.sv"
+
     lines = [
         f"class {module_name}_agent extends uvm_agent;",
         f"  `uvm_component_utils({module_name}_agent)",
         "",
-        f"  {module_name}_driver     {module_name}_drv;",
-        f"  uvm_sequencer #({module_name}_seq_item) {module_name}_sqr;",
+        f"  {module_name}_driver      drv;",
+        f"  {module_name}_monitor     mon;",
+        f"  {module_name}_sequencer   sqr;",
         "",
         "  function new(string name, uvm_component parent);",
         "    super.new(name, parent);",
@@ -245,18 +338,26 @@ def generate_agent(module_name: str, verif_dir: Path):
         "",
         "  function void build_phase(uvm_phase phase);",
         "    super.build_phase(phase);",
-        f"    {module_name}_drv = {module_name}_driver::type_id::create(\"{module_name}_drv\", this);",
-        f"    {module_name}_sqr = uvm_sequencer#({module_name}_seq_item)::type_id::create(\"{module_name}_sqr\", this);",
+        f"    mon = {module_name}_monitor::type_id::create(\"mon\", this);",
+        "    if (get_is_active() == UVM_ACTIVE) begin",
+        f"      sqr = {module_name}_sequencer::type_id::create(\"sqr\", this);",
+        f"      drv = {module_name}_driver::type_id::create(\"drv\", this);",
+        "    end",
         "  endfunction",
         "",
         "  function void connect_phase(uvm_phase phase);",
         "    super.connect_phase(phase);",
-        f"    {module_name}_drv.seq_item_port.connect({module_name}_sqr.seq_item_export);",
+        "    if (get_is_active() == UVM_ACTIVE) begin",
+        "      drv.seq_item_port.connect(sqr.seq_item_export);",
+        "    end",
         "  endfunction",
+        "",
         "endclass"
     ]
+
     file_path.write_text("\n".join(lines))
-    print(f"[INFO] Agent generated at: {file_path}")
+    print(f"[INFO] Agent (active/passive) generated at: {file_path}")
+
 
 
 def generate_env(module_name: str, verif_dir: Path):
@@ -266,78 +367,111 @@ def generate_env(module_name: str, verif_dir: Path):
         f"class {module_name}_env extends uvm_env;",
         f"  `uvm_component_utils({module_name}_env)",
         "",
-        f"  {module_name}_agent   {module_name}_agt;",
-        f"  {module_name}_monitor {module_name}_mon;",
+        f"  {module_name}_agent agt;",
         "",
-        "  function new(string name, uvm_component parent);",
+        f"  function new(string name = \"{module_name}_env\", uvm_component parent = null);",
         "    super.new(name, parent);",
         "  endfunction",
         "",
         "  function void build_phase(uvm_phase phase);",
         "    super.build_phase(phase);",
-        f"    {module_name}_agt = {module_name}_agent::type_id::create(\"{module_name}_agt\", this);",
-        f"    {module_name}_mon = {module_name}_monitor::type_id::create(\"{module_name}_mon\", this);",
+        f"    agt = {module_name}_agent::type_id::create(\"agt\", this);",
+        "  endfunction",
+        "",
+        "  function void connect_phase(uvm_phase phase);",
+        "    super.connect_phase(phase);",
         "  endfunction",
         "",
         "endclass"
     ]
 
     file_path.write_text("\n".join(lines))
-    print(f"[INFO] Environment (with monitor) generated at: {file_path}")
+    print(f"[INFO] Environment generated at: {file_path}")
+
 
 
 
 def generate_test(module_name: str, verif_dir: Path):
     file_path = verif_dir / f"{module_name}_test.sv"
+    env_inst = f"my_env"
+    seq_inst = "my_seq"
+    vif_inst = f"{module_name}_vif"
+
     lines = [
         f"class {module_name}_test extends uvm_test;",
         f"  `uvm_component_utils({module_name}_test)",
         "",
-        f"  {module_name}_env {module_name}_env;",
+        f"  {module_name}_env     {env_inst};",
+        f"  {module_name}_seq     {seq_inst};",
+        f"  virtual {module_name}_if {vif_inst};",
         "",
-        "  function new(string name, uvm_component parent);",
+        f"  function new(string name = \"{module_name}_test\", uvm_component parent = null);",
         "    super.new(name, parent);",
         "  endfunction",
         "",
         "  function void build_phase(uvm_phase phase);",
         "    super.build_phase(phase);",
-        f"    {module_name}_env = {module_name}_env::type_id::create(\"{module_name}_env\", this);",
+        "",
+        f"    if (!uvm_config_db#(virtual {module_name}_if)::get(this, \"\", \"vif\", {vif_inst}))",
+        "      `uvm_fatal(\"NO_VIF\", \"virtual interface not found\");",
+        "",
+        f"    uvm_config_db#(virtual {module_name}_if)::set(this, \"{env_inst}\", \"vif\", {vif_inst});",
+        "",
+        f"    {env_inst} = {module_name}_env::type_id::create(\"{env_inst}\", this);",
         "  endfunction",
         "",
         "  task run_phase(uvm_phase phase);",
+        "    string test_type;",
         "    phase.raise_objection(this);",
         "",
-        f"    {module_name}_seq my_seq;",
-        f"    my_seq = {module_name}_seq::type_id::create(\"my_seq\");",
-        f"    my_seq.start({module_name}_env.{module_name}_agt.{module_name}_sqr);",
+        "    if (!$value$plusargs(\"UVM_TESTTYPE=%s\", test_type))",
+        "      test_type = \"default\";",
+        "",
+        "    case (test_type)",
+        "      \"default\": begin",
+        "        `uvm_info(\"TEST\", \"Running default sequence\", UVM_MEDIUM)",
+        f"        {seq_inst} = {module_name}_seq::type_id::create(\"{seq_inst}\");",
+        f"        {seq_inst}.start({env_inst}.agt.sqr);",
+        "      end",
+        "",
+        "      default: begin",
+        "        `uvm_fatal(\"TEST\", $sformatf(\"Unknown test type: %s\", test_type))",
+        "      end",
+        "    endcase",
         "",
         "    phase.drop_objection(this);",
         "  endtask",
         "",
         "endclass"
     ]
+
     file_path.write_text("\n".join(lines))
     print(f"[INFO] Test class generated at: {file_path}")
+
 
 
 def generate_package(module_name: str, verif_dir: Path):
     file_path = verif_dir / f"{module_name}_pkg.sv"
     lines = [
         f"package {module_name}_pkg;",
-        '  import uvm_pkg::*;',
+        "  import uvm_pkg::*;",
+        "  `include \"uvm_macros.svh\"",
         "",
-        f'  `include "{module_name}_seq_item.sv"',
-        f'  `include "{module_name}_seq.sv"',
-        f'  `include "{module_name}_driver.sv"',
-        f'  `include "{module_name}_monitor.sv"',
-        f'  `include "{module_name}_agent.sv"',
-        f'  `include "{module_name}_env.sv"',
-        f'  `include "{module_name}_test.sv"',
+        # Ordered UVM includes
+        f"  `include \"{module_name}_seq_item.sv\"",
+        f"  `include \"{module_name}_seq.sv\"",
+        f"  `include \"{module_name}_sequencer.sv\"",
+        f"  `include \"{module_name}_driver.sv\"",
+        f"  `include \"{module_name}_monitor.sv\"",
+        f"  `include \"{module_name}_agent.sv\"",
+        f"  `include \"{module_name}_env.sv\"",
+        f"  `include \"{module_name}_test.sv\"",
         "",
-        f"endpackage"
+        f"endpackage : {module_name}_pkg"
     ]
     file_path.write_text("\n".join(lines))
     print(f"[INFO] Package generated at: {file_path}")
+
 
 def generate_monitor(module_name: str, ports: dict, verif_dir: Path):
     file_path = verif_dir / f"{module_name}_monitor.sv"
@@ -363,7 +497,7 @@ def generate_monitor(module_name: str, ports: dict, verif_dir: Path):
         "",
         "  task run_phase(uvm_phase phase);",
         "    forever begin",
-        "      @(posedge vif.clk);"
+        f"      @(posedge {module_name}_vif.clk);"
     ]
 
     print_stmt = "      $display(\"[MONITOR] Time=%0t"
@@ -402,9 +536,10 @@ if __name__ == "__main__":
     # tb_top
     generate_tb_top(verilog_file, module_name, parameters, ports)
 
-    generate_sequence_item(module_name, ports, verif_dir)
+    generate_sequence_item(module_name, ports, parameters, verif_dir)
     generate_sequence(module_name, verif_dir)
     generate_driver(module_name, ports, verif_dir)
+    generate_sequencer(module_name, verif_dir)
     generate_agent(module_name, verif_dir)
     generate_env(module_name, verif_dir)
     generate_test(module_name, verif_dir)

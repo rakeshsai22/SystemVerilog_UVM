@@ -2,9 +2,9 @@
 typedef enum logic [1:0] { CMD_INS, CMD_RD, CMD_DEL, CMD_NOP } cam_command;
 
 module CAM #(
-    int k_width = 10,
-    int d_width = 10,
-    int storage_size = 16,
+    int k_width = 16,
+    int d_width = 16,
+    int storage_size = 32,
     int storage_width = $clog2(storage_size)
 )
 (
@@ -80,10 +80,17 @@ module CAM #(
                     storage_key[eidx] <= key;
                 end
                 else if(mmatch) begin
+
                     storage_data[midx] <= in_data;
                 end
           CMD_NOP: $display("No operation");
             default: $display("please enter a proper command");
         endcase
     end
+
+//  tasks - why ? 
+//      insert and delete, we write to variables which takes some simulation time - so these are part of sequential logic
+
     endmodule
+
+

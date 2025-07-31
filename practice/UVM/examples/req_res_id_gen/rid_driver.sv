@@ -26,6 +26,8 @@ class rid_driver extends uvm_driver #(rid_seq_item);
             join_none
 
             seq_item_port.item_done();
+            // seqitem finsih
+            
         end
 
     endtask

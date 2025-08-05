@@ -78,7 +78,7 @@ module pixel_tb();
         end
 
         // C4: Equal low/mid/high
-        $display("C4")
+        $display("C4: equal low/mid/high")
         int each = TOTAL/3;
         foreach (pixels[i]) begin
             if(i<each) begin

@@ -1,3 +1,5 @@
+// Constraint: Memory address generator
+
 class mem_address_gen;
   rand int addr;           
   rand int lower_bound;  

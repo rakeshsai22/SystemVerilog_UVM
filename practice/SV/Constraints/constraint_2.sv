@@ -138,20 +138,9 @@ endmodule
 
 
 
-This is just a simple shared plaintext pad, with no execution capabilities.
+// interview
 
-When you know what language you'd like to use for your interview,
-simply choose it from the dots menu on the tab, or add a new language
-tab using the Languages button on the left.
-
-You can also change the default language your pads are created with
-in your account settings: https://app.coderpad.io/settings
-
-Enjoy your interview!
-
-interview
-
-1. Write A System Verilog Constraint To Generate Unique Values In Dynamic Array Without Unique Keyword
+// 1. Write A System Verilog Constraint To Generate Unique Values In Dynamic Array Without Unique Keyword
 
 randc int arr []
 int arr_size;
@@ -185,7 +174,7 @@ constraint c_uniq {
 
 }
 
-1. Every time the valid signal vld is high, the cnt is incremented
+// 1. Every time the valid signal vld is high, the cnt is incremented
 assert property (@(posedge clk)
   vld |-> (cnt == $past(cnt)+1)) 
 

@@ -1,5 +1,6 @@
 // Fill the 1Kx32 memory with below data ( 1024x32)
 //        bit 0 = 1,  bit [4:1] = 4‘hE,  bit[12:7] = 6’h2A,  bit[15:13] = 3’h4;
+// using constraints
 
 class mem_word_item extends uvm_sequence_item;
   rand bit [31:0] data;
@@ -13,3 +14,5 @@ class mem_word_item extends uvm_sequence_item;
   `uvm_object_utils(mem_word_item)
   function new(string name="mem_word_item"); super.new(name); endfunction
 endclass
+
+

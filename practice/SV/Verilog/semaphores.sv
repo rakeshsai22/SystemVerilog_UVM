@@ -47,6 +47,3 @@ module tb_semaphore;
         #10 putRoom (2);
     endtask
 endmodule
-
-
-endmodule

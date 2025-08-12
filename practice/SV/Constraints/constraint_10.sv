@@ -15,7 +15,7 @@
 // c1: [922,1023]
 // c2: [819,1023]
 // c3: 10% low + 10% high + 80% mid
-// c4: 33% low,33% mid,33% high
+// c4: 33% low,33% mid,33% higha
 
 
 class Pixel;

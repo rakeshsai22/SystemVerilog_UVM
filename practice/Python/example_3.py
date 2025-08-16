@@ -10,9 +10,20 @@ class Solution:
         # l       : left end of the segement 
         # r       : right end of the segement
 
-        mid = int(len(nums)/2)
-        if(target > mid):
+        l = 0
+        r = len(nums) -1
+
+        while l <= r:
+            mid = (l+r)//2
+
+            if nums[mid]==target:
+                return mid
+            elif nums[mid]>target:
+                r = mid - 1
+            else:
+                l = mid+1
             
+        return -1
 
 
 

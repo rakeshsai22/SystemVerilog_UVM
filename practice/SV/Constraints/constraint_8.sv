@@ -88,3 +88,9 @@ endclass
         end
     end
 endmodule
+
+16 in array 
+range : [0,63]
+no number should repeat more than three times
+even should not be more than thrice and odd twice
+

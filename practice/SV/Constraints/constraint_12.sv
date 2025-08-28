@@ -12,10 +12,10 @@
 
 module top();
 
-  localparam int len 	= 16; // length of the arr
-  localparam int range 	= 63; // range of values in the arr
-  localparam int bwidth = $clog2(range+1);
-  localparam int num 	=10;
+  int len 	= 16; // length of the arr
+  int range 	= 63; // range of values in the arr
+  int bwidth = $clog2(range+1);
+  int num 	=10;
   
   bit[bwidth-1:0] arr_gen[num][len];
 

@@ -21,7 +21,14 @@ module top();
 
     class rand_array;
 
-      rand bit [bwidth:0]arr[len];
+      rand int len,range,num;
+      rand int bwidth = $clog2(range+1);
+
+      rand bit [bwidth:0]arr[];
+
+      constraint arr_shape {
+        arr.size() == len;
+      }
 
         constraint arr_range {
           foreach (arr[i]){

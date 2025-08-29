@@ -78,3 +78,17 @@
               $finish;
             end
           endmodule
+
+
+// Contains Synopsys proprietary information.
+// Compiler version U-2023.03-SP2_Full64; Runtime version U-2023.03-SP2_Full64;  Aug 29 02:00 2025
+// Array: 13 2 11 8 15 5 
+// Array: 13 4 12 8 11 14 
+// Array: 2 11 6 12 12 4 15 7 6 
+// Array: 16 2 2 5 13 1 5 4 7 14 
+// Array: 16 7 10 9 
+// $finish called from file "testbench.sv", line 78.
+// $finish at simulation time                    0
+//            V C S   S i m u l a t i o n   R e p o r t 
+// Time: 0 ns
+// CPU Time:  

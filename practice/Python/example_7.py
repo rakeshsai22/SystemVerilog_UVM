@@ -28,3 +28,6 @@ def multiply(x,y):
     return x*y
 product = reduce(multiply,numbers)
 print(product)
+
+even_squares = filter(is_even,squares)
+print(list(even_squares))

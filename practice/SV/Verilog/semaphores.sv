@@ -9,6 +9,23 @@
 //  Built-in Class:
 //      semaphore is a predefined, built-in class in SystemVerilog, providing methods for managing the keys.
 
+// Code your design here
+// Semaphores
+
+// semaphore is a built in class
+//  it has methods to allocate the number of keys for the particular object, get and put keys in the bucket.
+
+// Methods;
+// function new(int keycount = 0);
+//  - speciies the number of keys initially allocated to the semaphore bucket
+
+// function void put(int keycount = 1); :: specifies number of keys returned to semaphore
+
+// task get(int keycount = 1); :: specifies number of keys to obtain from th semaphore
+
+// function int try_get(int keycount =1); :: specifies the required number of keys to obtain from the semaphore
+
+
 
 module tb_semaphore;
 

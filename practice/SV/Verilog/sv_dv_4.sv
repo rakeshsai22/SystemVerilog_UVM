@@ -8,6 +8,15 @@
 // How would you write a SystemVerilog assertion to check that the FIFO is never written when full is high?
 
 module sync_fifo;
+    localparam DEPTH;
+    localparam DATAWIDTH;
+
+    logic write_en, read_en;
+    logic [15:0] data_in;
+    logic [15:0] data_out;
+
+    output flag;
+
     
     
 endmodule

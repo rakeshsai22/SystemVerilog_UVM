@@ -1,7 +1,12 @@
 class pattern;
     rand int a[];
-    constrinat size {a.size==10;}
-    constraint mirror {foreach(a[i]) if(i%2==0) a[i]==0; else a[i]==(i+1)/2;}
+    constraint size {a.size==10;}
+    constraint mirror {
+      foreach(a[i]) begin
+      if(i%2==0) a[i]==0; 
+      else a[i]==(i+1)/2;
+      end
+      }
 
 endclass
 
@@ -117,6 +122,11 @@ endmodule
 //             // all processes in the current time step have completed. When both tasks are used in 
 //             // the same time unit, $strobe will reflect changes made by nonblocking assignments that 
 //             // occur before its execution, while $display will show values as they were at the moment it was called.
+//             // Error-[DTINPCIL] Dynamic type in non-procedural context
+//                testbench.sv, 24
+//                "$strobe("%0d", p1.a[j]);"
+//                Argument: p1.a[j]
+//                Automatic variable may not be used in non-procedural context.
 
 // Pattern 4:
 // we can use randc for unique values which gives out cyclic random values

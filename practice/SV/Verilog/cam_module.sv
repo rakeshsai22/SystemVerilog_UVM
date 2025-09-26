@@ -1,5 +1,7 @@
 // Code your design here
 typedef enum logic [1:0] { CMD_INS, CMD_RD, CMD_DEL, CMD_NOP } cam_command;
+// need to use associative arrays
+
 
 module CAM #(
     int k_width = 16,

@@ -1,5 +1,5 @@
-#include "mux_2x1.h"
-#include "verilated.h"
+// #include "mux_2x1.h"
+// #include "verilated.h"
 #include <iostream>
 
 int main(int argc, char** argv) {
@@ -24,3 +24,7 @@ int main(int argc, char** argv) {
 // - V e r i l a t i o n   R e p o r t: Verilator 5.038 2025-07-08 rev UNKNOWN.REV
 // - Verilator: Built from 0.000 MB sources in 0 modules, into 0.000 MB in 0 C++ files needing 0.000 MB
 // - Verilator: Walltime 0.001 s (elab=0.000, cvt=0.000, bld=0.000); cpu 0.001 s on 1 threads
+
+- V e r i l a t i o n   R e p o r t: Verilator 5.038 2025-07-08 rev UNKNOWN.REV
+- Verilator: Built from 0.025 MB sources in 2 modules, into 0.025 MB in 7 C++ files needing 0.000 MB
+- Verilator: Walltime 0.037 s (elab=0.005, cvt=0.011, bld=0.000); cpu 0.009 s on 1 threads

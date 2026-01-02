@@ -19,6 +19,6 @@ async def mux_test(dut):
     
     await Timer(1,'ns')
 
-    if dut.out !=1:
-        raise TestFailure('Output is incorrect' % OUT: str(dut.out))
-    
+    # if dut.out !=1:
+    #     raise TestFailure('Output is incorrect' % OUT: str(dut.out))
+    assert dut.out.value == 1

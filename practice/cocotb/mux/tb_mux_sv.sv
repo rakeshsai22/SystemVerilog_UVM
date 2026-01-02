@@ -10,8 +10,8 @@ module tb_mux_sv;
     );
 
     initial begin
-        $dumpfile("dump.vcd");
-        $dumpvars(0, tb_mux_sv);
+        // $dumpfile("dump.vcd");
+        // $dumpvars(0, tb_mux_sv);
 
         a = 0;
         b = 0;

@@ -40,7 +40,7 @@ VM_USER_CFLAGS = \
 
 # User LDLIBS (from -LDFLAGS on Verilator command line)
 VM_USER_LDLIBS = \
-  -Wl,-rpath,/Users/srisairakeshnakkilla/Library/Python/3.9/lib/python/site-packages/cocotb/libs -L/Users/srisairakeshnakkilla/Library/Python/3.9/lib/python/site-packages/cocotb/libs -lcocotbvpi_verilator \
+  -Wl,-rpath,/Users/srisairakeshnakkilla/EDA/Projects/practice/cocotb/mux/cocoenv/lib/python3.13/site-packages/cocotb/libs -L/Users/srisairakeshnakkilla/EDA/Projects/practice/cocotb/mux/cocoenv/lib/python3.13/site-packages/cocotb/libs -lcocotbvpi_verilator \
 
 # User .cpp files (from .cpp's on Verilator command line)
 VM_USER_CLASSES = \
@@ -49,7 +49,7 @@ VM_USER_CLASSES = \
 # User .cpp directories (from .cpp's on Verilator command line)
 VM_USER_DIR = \
   .. \
-  ../../../../../../Library/Python/3.9/lib/python/site-packages/cocotb/share/lib/verilator \
+  ../cocoenv/lib/python3.13/site-packages/cocotb/share/lib/verilator \
 
 ### Default rules...
 # Include list of all generated classes
@@ -60,7 +60,7 @@ include $(VERILATOR_ROOT)/include/verilated.mk
 ### Executable rules... (from --exe)
 VPATH += $(VM_USER_DIR)
 
-verilator.o: /Users/srisairakeshnakkilla/Library/Python/3.9/lib/python/site-packages/cocotb/share/lib/verilator/verilator.cpp 
+verilator.o: /Users/srisairakeshnakkilla/EDA/Projects/practice/cocotb/mux/cocoenv/lib/python3.13/site-packages/cocotb/share/lib/verilator/verilator.cpp 
 	$(OBJCACHE) $(CXX) $(CXXFLAGS) $(CPPFLAGS) $(OPT_FAST)  -c -o $@ $<
 
 ### Link rules... (from --exe)

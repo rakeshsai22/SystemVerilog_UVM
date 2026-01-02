@@ -1,5 +1,5 @@
 verilator.o: \
-  /Users/srisairakeshnakkilla/Library/Python/3.9/lib/python/site-packages/cocotb/share/lib/verilator/verilator.cpp \
+  /Users/srisairakeshnakkilla/EDA/Projects/practice/cocotb/mux/cocoenv/lib/python3.13/site-packages/cocotb/share/lib/verilator/verilator.cpp \
   Vtop.h \
   /opt/homebrew/Cellar/verilator/5.038/share/verilator/include/verilated.h \
   /opt/homebrew/Cellar/verilator/5.038/share/verilator/include/verilated_config.h \

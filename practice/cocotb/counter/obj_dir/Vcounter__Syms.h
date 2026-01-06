@@ -27,6 +27,9 @@ class alignas(VL_CACHE_LINE_BYTES)Vcounter__Syms final : public VerilatedSyms {
     // MODULE INSTANCE STATE
     Vcounter___024root             TOP;
 
+    // COVERAGE
+    uint32_t __Vcoverage[11];
+
     // CONSTRUCTORS
     Vcounter__Syms(VerilatedContext* contextp, const char* namep, Vcounter* modelp);
     ~Vcounter__Syms();

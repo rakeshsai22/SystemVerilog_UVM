@@ -10,7 +10,7 @@ VM_C11 = 1
 # Timing enabled?  0/1
 VM_TIMING = 0
 # Coverage output mode?  0/1 (from --coverage)
-VM_COVERAGE = 0
+VM_COVERAGE = 1
 # Parallel builds?  0/1 (from --output-split)
 VM_PARALLEL_BUILDS = 0
 # Tracing output mode?  0/1 (from --trace-fst/--trace-saif/--trace-vcd)
@@ -32,6 +32,7 @@ VM_CLASSES_FAST += \
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
   Vcounter___024root__Slow \
+  Vcounter___024root__DepSet_h0dd033c2__0__Slow \
   Vcounter___024root__DepSet_h5086c508__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
@@ -44,6 +45,7 @@ VM_SUPPORT_SLOW += \
 # Global classes, need linked once per executable, fast-path, compile with highest optimization
 VM_GLOBAL_FAST += \
   verilated \
+  verilated_cov \
   verilated_threads \
 
 # Global classes, need linked once per executable, non-fast-path, compile with low/medium optimization

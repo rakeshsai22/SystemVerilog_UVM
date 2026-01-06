@@ -4,5 +4,6 @@
 #include "Vcounter___024root__DepSet_h0dd033c2__0.cpp"
 #include "Vcounter___024root__DepSet_h5086c508__0.cpp"
 #include "Vcounter___024root__Slow.cpp"
+#include "Vcounter___024root__DepSet_h0dd033c2__0__Slow.cpp"
 #include "Vcounter___024root__DepSet_h5086c508__0__Slow.cpp"
 #include "Vcounter__Syms.cpp"

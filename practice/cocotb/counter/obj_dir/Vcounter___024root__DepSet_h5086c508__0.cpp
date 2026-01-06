@@ -5,6 +5,35 @@
 #include "Vcounter__pch.h"
 #include "Vcounter___024root.h"
 
+void Vcounter___024root___ico_sequent__TOP__0(Vcounter___024root* vlSelf);
+
+void Vcounter___024root___eval_ico(Vcounter___024root* vlSelf) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vcounter___024root___eval_ico\n"); );
+    Vcounter__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    auto& vlSelfRef = std::ref(*vlSelf).get();
+    // Body
+    if ((1ULL & vlSelfRef.__VicoTriggered.word(0U))) {
+        Vcounter___024root___ico_sequent__TOP__0(vlSelf);
+    }
+}
+
+void Vcounter___024root___eval_triggers__ico(Vcounter___024root* vlSelf);
+
+bool Vcounter___024root___eval_phase__ico(Vcounter___024root* vlSelf) {
+    VL_DEBUG_IF(VL_DBG_MSGF("+    Vcounter___024root___eval_phase__ico\n"); );
+    Vcounter__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    auto& vlSelfRef = std::ref(*vlSelf).get();
+    // Init
+    CData/*0:0*/ __VicoExecute;
+    // Body
+    Vcounter___024root___eval_triggers__ico(vlSelf);
+    __VicoExecute = vlSelfRef.__VicoTriggered.any();
+    if (__VicoExecute) {
+        Vcounter___024root___eval_ico(vlSelf);
+    }
+    return (__VicoExecute);
+}
+
 void Vcounter___024root___eval_act(Vcounter___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vcounter___024root___eval_act\n"); );
     Vcounter__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
@@ -21,17 +50,6 @@ void Vcounter___024root___eval_nba(Vcounter___024root* vlSelf) {
     if ((3ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
         Vcounter___024root___nba_sequent__TOP__0(vlSelf);
     }
-}
-
-VL_INLINE_OPT void Vcounter___024root___nba_sequent__TOP__0(Vcounter___024root* vlSelf) {
-    VL_DEBUG_IF(VL_DBG_MSGF("+    Vcounter___024root___nba_sequent__TOP__0\n"); );
-    Vcounter__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
-    auto& vlSelfRef = std::ref(*vlSelf).get();
-    // Body
-    vlSelfRef.count = ((IData)(vlSelfRef.rst_n) ? (0xfU 
-                                                   & ((IData)(1U) 
-                                                      + (IData)(vlSelfRef.count)))
-                        : 0U);
 }
 
 void Vcounter___024root___eval_triggers__act(Vcounter___024root* vlSelf);
@@ -70,6 +88,9 @@ bool Vcounter___024root___eval_phase__nba(Vcounter___024root* vlSelf) {
 }
 
 #ifdef VL_DEBUG
+VL_ATTR_COLD void Vcounter___024root___dump_triggers__ico(Vcounter___024root* vlSelf);
+#endif  // VL_DEBUG
+#ifdef VL_DEBUG
 VL_ATTR_COLD void Vcounter___024root___dump_triggers__nba(Vcounter___024root* vlSelf);
 #endif  // VL_DEBUG
 #ifdef VL_DEBUG
@@ -81,9 +102,28 @@ void Vcounter___024root___eval(Vcounter___024root* vlSelf) {
     Vcounter__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     auto& vlSelfRef = std::ref(*vlSelf).get();
     // Init
+    IData/*31:0*/ __VicoIterCount;
+    CData/*0:0*/ __VicoContinue;
     IData/*31:0*/ __VnbaIterCount;
     CData/*0:0*/ __VnbaContinue;
     // Body
+    __VicoIterCount = 0U;
+    vlSelfRef.__VicoFirstIteration = 1U;
+    __VicoContinue = 1U;
+    while (__VicoContinue) {
+        if (VL_UNLIKELY(((0x64U < __VicoIterCount)))) {
+#ifdef VL_DEBUG
+            Vcounter___024root___dump_triggers__ico(vlSelf);
+#endif
+            VL_FATAL_MT("counter.sv", 1, "", "Input combinational region did not converge.");
+        }
+        __VicoIterCount = ((IData)(1U) + __VicoIterCount);
+        __VicoContinue = 0U;
+        if (Vcounter___024root___eval_phase__ico(vlSelf)) {
+            __VicoContinue = 1U;
+        }
+        vlSelfRef.__VicoFirstIteration = 0U;
+    }
     __VnbaIterCount = 0U;
     __VnbaContinue = 1U;
     while (__VnbaContinue) {

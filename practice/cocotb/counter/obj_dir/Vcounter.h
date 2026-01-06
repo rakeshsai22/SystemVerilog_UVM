@@ -9,6 +9,7 @@
 #define VERILATED_VCOUNTER_H_  // guard
 
 #include "verilated.h"
+#include "verilated_cov.h"
 
 class Vcounter__Syms;
 class Vcounter___024root;

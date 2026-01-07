@@ -1,5 +1,6 @@
 import cocotb
 from cocotb.triggers import Timer
+# from pyuvm import run_test
 
 from pyuvm import (
     uvm_test, uvm_env, uvm_component,
@@ -51,7 +52,7 @@ class mux_monitor(uvm_component):
             tr.a = int(self.dut.a.value)
             tr.b = int(self.dut.b.value)
             tr.sel = int(self.dut.sel.value)
-            tr.exp = int(self.dut.out.value)  # observed
+            tr.exp = int(self.dut.out.value)
             self.ap.write(tr)
 
 class mux_scoreboard(uvm_component):
@@ -64,9 +65,6 @@ class mux_scoreboard(uvm_component):
     async def run_phase(self):
         while True:
             tr = await self.fifo.get()
-            # This example uses observed output as exp in monitor;
-            # better: monitor observed, scoreboard recompute expected.
-            # We'll recompute expected here:
             expected = tr.a if tr.sel else tr.b
             assert tr.exp == expected, f"Mismatch: a={tr.a} b={tr.b} sel={tr.sel} got={tr.exp} exp={expected}"
 
@@ -76,8 +74,6 @@ class mux_env(uvm_env):
         self.drv = mux_driver("drv", self)
         self.mon = mux_monitor("mon", self)
         self.scb = mux_scoreboard("scb", self)
-
-        # bind dut handle into components that need it
         self.drv.dut = self.dut
         self.mon.dut = self.dut
 
@@ -99,6 +95,4 @@ class mux_uvm_test(uvm_test):
 
 @cocotb.test()
 async def run_pyuvm(dut):
-    t = mux_uvm_test("t", None)
-    t.dut = dut
-    await t.run_test()
+    await run_test("mux_uvm_test", dut=dut)

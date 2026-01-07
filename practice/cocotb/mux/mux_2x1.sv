@@ -5,9 +5,5 @@ module mux_2x1 (
     output out
 );
     assign out = sel ? a:b;
-    // initial begin
-    //     $dumpfile("dump.vcd");
-    //     $dumpvars(0,mux_2x1);
-    // end
     
 endmodule

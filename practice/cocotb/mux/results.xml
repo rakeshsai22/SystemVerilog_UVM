@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1767830827" />
+    <testcase name="run_pyuvm" classname="test_mux_pyuvm" file="/Users/srisairakeshnakkilla/EDA/Projects/practice/cocotb/mux/tb_pyuvm/test_mux_pyuvm.py" lineno="97" time="0.00031304359436035156" sim_time_ns="0.0" ratio_time="0.0" />
+  </testsuite>
+</testsuites>

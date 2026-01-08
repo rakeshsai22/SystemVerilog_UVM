@@ -1,6 +1,7 @@
 import cocotb
 from cocotb.triggers import Timer
 # from pyuvm import run_test
+from pyuvm import ConfigDB, uvm_root
 
 from pyuvm import (
     uvm_test, uvm_env, uvm_component,
@@ -71,9 +72,10 @@ class mux_scoreboard(uvm_component):
 class mux_env(uvm_env):
     def build_phase(self):
         self.seqr = uvm_sequencer("seqr", self)
-        self.drv = mux_driver("drv", self)
-        self.mon = mux_monitor("mon", self)
-        self.scb = mux_scoreboard("scb", self)
+        self.drv  = mux_driver("drv", self)
+        self.mon  = mux_monitor("mon", self)
+        self.scb  = mux_scoreboard("scb", self)
+        self.dut = ConfigDB().get(self, "", "dut")
         self.drv.dut = self.dut
         self.mon.dut = self.dut
 
@@ -84,7 +86,6 @@ class mux_env(uvm_env):
 class mux_uvm_test(uvm_test):
     def build_phase(self):
         self.env = mux_env("env", self)
-        self.env.dut = self.dut
 
     async def run_phase(self):
         self.raise_objection()
@@ -95,4 +96,35 @@ class mux_uvm_test(uvm_test):
 
 @cocotb.test()
 async def run_pyuvm(dut):
-    await run_test("mux_uvm_test", dut=dut)
+    ConfigDB().set(None, "*", "dut", dut)
+    uvm_root().run_test("mux_uvm_test")
+
+
+# - V e r i l a t i o n   R e p o r t: Verilator 5.038 2025-07-08 rev UNKNOWN.REV
+# - Verilator: Built from 0.025 MB sources in 2 modules, into 0.028 MB in 8 C++ files needing 0.000 MB
+# - Verilator: Walltime 0.016 s (elab=0.002, cvt=0.006, bld=0.000); cpu 0.007 s on 1 threads
+# /Applications/Xcode.app/Contents/Developer/usr/bin/make -C sim_build  -f Vtop.mk
+
+# COCOTB_TEST_MODULES=test_mux_pyuvm COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=mux_2x1 TOPLEVEL_LANG=verilog \
+#          sim_build/Vtop     
+#      -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:94   in _embed_init_python              Using Python 3.13.9 interpreter at /Users/srisairakeshnakkilla/EDA/Projects/practice/cocotb/mux/cocoenv/bin/python3
+#      -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+#      0.00ns INFO     cocotb                             Running on Verilator version 5.038 2025-07-08
+#      0.00ns INFO     cocotb                             Seeding Python random module with 1767830827
+#      0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /Users/srisairakeshnakkilla/EDA/Projects/practice/cocotb/mux/cocoenv/lib/python3.13/site-packages/cocotb
+#      0.00ns INFO     cocotb.regression                  pytest not found, install it to enable better AssertionError messages
+#      0.00ns INFO     cocotb                             Running tests
+#      0.00ns INFO     cocotb.regression                  running test_mux_pyuvm.run_pyuvm (1/1)
+#      0.00ns WARNING  py.warnings                        /Users/srisairakeshnakkilla/EDA/Projects/practice/cocotb/mux/tb_pyuvm/test_mux_pyuvm.py:100: RuntimeWarning: coroutine 'uvm_root.run_test' was never awaited
+#                                                           uvm_root().run_test("mux_uvm_test")
+                                                        
+#      0.00ns INFO     cocotb.regression                  test_mux_pyuvm.run_pyuvm passed
+#      0.00ns INFO     cocotb.regression                  **************************************************************************************
+#                                                         ** TEST                          STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+#                                                         **************************************************************************************
+#                                                         ** test_mux_pyuvm.run_pyuvm       PASS           0.00           0.00          0.00  **
+#                                                         **************************************************************************************
+#                                                         ** TESTS=1 PASS=1 FAIL=0 SKIP=0                  0.00           0.00          0.00  **
+#                                                         **************************************************************************************
+                                                        
+# - :0: Verilog $finish

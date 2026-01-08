@@ -40,3 +40,23 @@ int main(int argc, char** argv) {
 // - V e r i l a t i o n   R e p o r t: Verilator 5.038 2025-07-08 rev UNKNOWN.REV
 // - Verilator: Built from 0.025 MB sources in 2 modules, into 0.021 MB in 6 C++ files needing 0.000 MB
 // - Verilator: Walltime 3.332 s (elab=0.000, cvt=0.007, bld=3.320); cpu 0.006 s on 1 threads
+// Cycle 0 Count = 1
+// Cycle 1 Count = 2
+// Cycle 2 Count = 3
+// Cycle 3 Count = 4
+// Cycle 4 Count = 5
+// Cycle 5 Count = 6
+// Cycle 6 Count = 7
+// Cycle 7 Count = 8
+// Cycle 8 Count = 9
+// Cycle 9 Count = 10
+// Cycle 10 Count = 11
+// Cycle 11 Count = 12
+// Cycle 12 Count = 13
+// Cycle 13 Count = 14
+// Cycle 14 Count = 15
+// Cycle 15 Count = 0
+// Cycle 16 Count = 1
+// Cycle 17 Count = 2
+// Cycle 18 Count = 3
+// Cycle 19 Count = 4

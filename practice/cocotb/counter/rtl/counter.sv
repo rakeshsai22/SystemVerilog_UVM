@@ -4,7 +4,7 @@ module counter (
     output logic [3:0] count
 );
 
-    always_ff @(posedge clk or negedge rst_n) begin
+    always_ff @(posedge clk ) begin
         if (!rst_n) begin
             count <= 4'b0000;
         end

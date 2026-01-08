@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1767835438" />
+    <testcase name="run_pyuvm" classname="tb_counter_pyuvm" file="/Users/srisairakeshnakkilla/EDA/Projects/practice/cocotb/counter/tb_counter_pyuvm.py" lineno="66" time="0.0004248619079589844" sim_time_ns="0.0" ratio_time="0.0" />
+  </testsuite>
+</testsuites>

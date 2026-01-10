@@ -45,8 +45,8 @@ module fifo_syn
     end
 
     // empty and full
-    assign empty = (write_ptr == read_ptr);
-    assign full = (read_ptr == (~write_ptr[FIFO_DEPTH_LOG],write_ptr[FIFO_DEPTH_LOG-1:0])); 
+    assign empty = (wr_ptr == rd_ptr);
+    assign full = (rd_ptr == (~wr_ptr[FIFO_DEPTH_LOG],wr_ptr[FIFO_DEPTH_LOG-1:0])); 
 
     
 endmodule

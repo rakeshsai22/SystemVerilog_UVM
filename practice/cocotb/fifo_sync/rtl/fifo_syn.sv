@@ -1,5 +1,5 @@
 module fifo_syn #(
-    parameter FIFO_DEPTH = 8;
+    parameter FIFO_DEPTH = 8,
     parameter DATA_WIDTH = 32
 ) (
     input clk,
@@ -7,16 +7,16 @@ module fifo_syn #(
     input wr_en,
     input rd_en,
     input cs,
-    input [DATA_WIDTH-1:0] data_in,
-    output [DATA_WIDTH-1:0] data_out,
+    input logic [DATA_WIDTH-1:0] data_in,
+    output logic [DATA_WIDTH-1:0] data_out,
     output empty,
     output full
 );
     localparam FIFO_DEPTH_LOG = $clog2(FIFO_DEPTH);
 
     reg [DATA_WIDTH-1:0] fifo [0:FIFO_DEPTH-1];
-    reg [FIFO_DEPTH] wr_ptr;
-    reg [FIFO_DEPTH] rd_ptr;
+    reg [FIFO_DEPTH_LOG-1:0] wr_ptr;
+    reg [FIFO_DEPTH_LOG-1:0] rd_ptr;
 
     // writing
 
@@ -34,9 +34,9 @@ module fifo_syn #(
     // reading
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
-            rs_ptr<=0;
+            rd_ptr<=0;
         end
-        else if (cs && rd_ptr && !empty) begin
+        else if (cs && rd_en && !empty) begin
             data_out<= fifo[rd_ptr[FIFO_DEPTH_LOG-1:0]];
             rd_ptr<=rd_ptr+1;
         end
@@ -45,6 +45,9 @@ module fifo_syn #(
     // empty full check
 
     assign empty = (wr_ptr == rd_ptr);
-    assign full = (rd_ptr == (~wr_ptr[FIFO_DEPTH_LOG],wr_ptr[FIFO_DEPTH_LOG-1:0]));
+    // assign full = (rd_ptr == (~wr_ptr[FIFO_DEPTH_LOG], wr_ptr[FIFO_DEPTH_LOG-1:0])); 
+    assign full = (rd_ptr == {~wr_ptr[FIFO_DEPTH_LOG], wr_ptr[FIFO_DEPTH_LOG-1:0]});
+
+    // wrap around & full 
 
 endmodule

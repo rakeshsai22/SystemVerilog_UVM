@@ -38,15 +38,15 @@ module fifo_syn
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n)
             rd_ptr <=0;
-        else if (cs && rd_ptr && !emty) begin
+        else if (cs && rd_en && !emty) begin
             data_out <= fifo[rd_ptr[FIFO_DEPTH_LOG-1:0]];
             rd_ptr <= rd_ptr + 1;
         end
     end
 
     // empty and full
-    assign empty = (write_ptr == read_ptr);
-    assign full = (read_ptr == (~write_ptr[FIFO_DEPTH_LOG],write_ptr[FIFO_DEPTH_LOG-1:0])); 
+    assign empty = (wr_ptr == rd_ptr);
+    assign full = (rd_ptr == (~wr_ptr[FIFO_DEPTH_LOG],wr_ptr[FIFO_DEPTH_LOG-1:0])); 
 
     
 endmodule

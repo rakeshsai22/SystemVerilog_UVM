@@ -6,7 +6,6 @@
 # # You can read the file in using pandas and create A in compact notation
 # # using this code:
 
-# #3a. #####################################
 import numpy as np
 import pandas as pd
 df = pd.read_csv('regressionprob1_train0.csv')
@@ -51,8 +50,6 @@ print("residual squared", R2)
 
 # #####################################
 
-# # 3b) Solve again using a linear solver like numpy.linalg.solve and compare
-# # results.
 
 w_lin = np.linalg.solve((A.T @ A ), (A.T @ y))
 
@@ -66,7 +63,7 @@ print("residual squared=", R2_lin)
 # w = [ 0.07249081  2.04773925  3.16044263 -5.09550919 10.20993353]
 # residual squared= 0.9969209428506091
 
-# # c) Now use the model trained in a) to do prediction on dataset
+# # Now use the model trained in a) to do prediction on dataset
 # # regressionprob1_test0.csv. The column labeled F is the target. Compare
 # # these predictions to actual target labels by determining the residual
 # # squared, or R2
@@ -88,7 +85,7 @@ print("\n=== Part 3(c): Test evaluation (using 3a weights) ===")
 print("Test R2 =", R2_test)
 
 
-# # 4) c) Now use the model trained in a) to do prediction on dataset
+# # Now use the model trained in a) to do prediction on dataset
 # # regressionprob1_test0.csv. The column labeled F is the target. Compare
 # # these predictions to actual target labels by determining the residual
 # # squared, or R2
@@ -96,8 +93,7 @@ print("Test R2 =", R2_test)
 # # and from b)?
 # # Now write your own Gradient descents code and code the gradient to find the
 # # weights to minimize the cost function in (3) using training data
-# # regressionprob1_train0.csv. (hint: see W1 Lecture 5 slide 6, 23-30 and W2
-# # Lecture 4 slide 25) Solve for the weights and intercept using this using this
+# # regressionprob1_train0.csv. Solve for the weights and intercept using this using this
 # # training dataset. Compare this solution with your solution from (4). Be sure to
 # # use compact notation.
 
@@ -135,7 +131,7 @@ print("Train R2 (GD)    =", R2_gd)
 print("\nMax abs diff gradient descent vs linear:", np.max(np.abs(w_gd - w_lin)))
 
 
-# # 5) Use a canned linear regression similar to
+# # Use a canned linear regression similar to
 # # sklearn.linear_model.LinearRegression and extract the weights for the training
 # # dataset. Apply this model to the training dataset. Calculate and compare your
 # # resulting R2 and model weights to those in (4), and (5). You can use compact
@@ -160,7 +156,7 @@ print("Train R2    =", Rsquared(y, Yp_lin))
 
 
 
-# # 6) Now use the linear regression, Lasso, Ridge, and Elastic net
+# # Now use the linear regression, Lasso, Ridge, and Elastic net
 # # Use the dataset randPolyN2.csv The column labeled Z is the target.
 
 # df = pd.read_csv('randPolyN2.csv')
